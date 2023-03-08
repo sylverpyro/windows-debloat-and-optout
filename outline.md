@@ -79,6 +79,7 @@ $remove_list = @(
   "Gaming Services"
   "Get Help"
   "HEIF Image Extensions"
+  "HEVC Video Extensions from Device Manufacturer"
   "Mail and Calendar"
   "Microsoft Accessory Center"
   "Microsoft GameInput"
@@ -393,6 +394,8 @@ $winget_install_list = @(
   "EpicGames.EpicGamesLauncher"
   "VideoLAN.VLC"
   "Discord.Discord"
+  "Google.Drive"
+  "Twilio.Authy"
 )
 
 foreach ($app in $winget_install_list) {
