@@ -7,8 +7,9 @@ This is the outline doc for the process.  It includes executable code snips as w
 # Sources and credits
 - https://dl5.oo-software.com - Shutup and OptOut 10+
 - https://github.com/builtbybel/BloatyNosy/releases - BloatyNoisy
-- https://github.com/Sycnex/Windows10Debloater - Various code snippits
-- https://github.com/5cover/WinClean - Various code snippits
+- https://github.com/Sycnex/Windows10Debloater - Win10Debloater and Various code snippits
+- https://github.com/5cover/WinClean - Various code snippits (don't actually recommend running it)
+- https://devblogs.microsoft.com/powershell-community/how-to-update-or-add-a-registry-key-value-with-powershell/ - for powershell regedit code
 
 # Update the OS 
 This is required to do anything as winget is hidden in the windows updates)
