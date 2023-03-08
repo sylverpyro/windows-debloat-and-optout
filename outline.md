@@ -396,6 +396,7 @@ $winget_install_list = @(
   "Discord.Discord"
   "Google.Drive"
   "Twilio.Authy"
+  "mtkennerly.ludusavi"
 )
 
 foreach ($app in $winget_install_list) {
