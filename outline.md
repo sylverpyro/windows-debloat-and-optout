@@ -13,8 +13,8 @@ This is the outline doc for the process.  It includes executable code snips as w
 
 # Update the OS 
 This is required to do anything as winget is hidden in the windows updates)
+PowerShell (admin)
 ```
-win+x , A (admin terminal)
 Install-Module PSWindowsUpdate 
 Add-WUServiceManager -MicrosoftUpdate
 Get-WindowsUpdate
@@ -23,11 +23,13 @@ Install-WindowsUpdate
 Once all upates are installed REBOOT
 
 # Create a system restore point!
+PowerShell (admin)
 ```
 Checkpoint-Computer -Description "Before debloating tools"
 ```
 
 # Get and run Win10 Debloater
+PowerShell
 ```
 wget https://github.com/Sycnex/Windows10Debloater/archive/refs/heads/master.zip -OutFile ~\Downloads\Win10Debloater-sycnex.zip
 ```
@@ -36,6 +38,7 @@ wget https://github.com/Sycnex/Windows10Debloater/archive/refs/heads/master.zip 
 https://github.com/builtbybel/BloatyNosy/releases/latest
 
 # Get and run Opt out and ShutUp 11
+PowerShell
 ```
 wget https://dl5.oo-software.com/files/ooshutup10/OOSU10.exe -OutFile ~\Downloads\OOSU10.exe
 ```
@@ -44,22 +47,25 @@ wget https://dl5.oo-software.com/files/ooshutup10/OOSU10.exe -OutFile ~\Download
 The above applicationns make a lot of changes that will only take effect on the next reboot and we want a known state before we mess with more settings
 
 # Make another restore point for safety
+PowerShell (admin)
 ```
 Checkpoint-Computer -Description "Before manual debloating tweaks"
 ```
 
 # Remove optional features packages that are not already intalled
+PowerShell (admin)
 ```
 dism /online /cleanup-image /StartComponentCleanup /ResetBase
 ```
 
 # Stop and disable WAP Push Service
+Powershell (admin)
 ```
 Stop-Service "dmwappushservice"
 Set-Service "dmwappushservice" -StartupType Disabled
 ```
 # Disable various useless services for home devices
-These must be run from an admin shell of cmd.exe
+cmd.exe (admin)
 ```
 # Disable hyper-v services
 sc config vmicshutdown start= disabled
