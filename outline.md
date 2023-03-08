@@ -21,11 +21,18 @@ Set-ExecutionPolicy RemoteSigned
 
 # Update the OS 
 This is required to do anything as winget is hidden in the windows updates)
+
+Install the CLI update tool
 PowerShell (admin)
 ```
 Import-Module PowerShellGet
 Install-Module PSWindowsUpdate 
 Add-WUServiceManager -MicrosoftUpdate
+```
+
+Run the update
+**NOTE** If no updates are shown, check the Windows Update section of 'settings' as it may have already downloaded all the available updates and is waiting for you to do a reboot
+```
 Get-WindowsUpdate
 Install-WindowsUpdate -AcceptAll
 
@@ -33,9 +40,17 @@ Install-WindowsUpdate -AcceptAll
 Once all upates are installed accept the prompt to reboot
 
 # Create a system restore point before doing ANYTHING
+**NOTE** When a system update is done (like just before) it automatically creates a system restore point.  This is a problem as by default Windows only allows checkpoints every 24 hours.  To fix this we set a registry key to '0' to allow arbitrary checkpoints.  Remember to delete this key after the checkpoint is done. 
 PowerShell (admin)
 ```
-Checkpoint-Computer -Description "Fresh updated system before debloating tools"
+# Remove the checkpoint interval entierly
+REG ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SystemRestore" /V "SystemRestorePointCreationFrequency" /T REG_DWORD /D 0 /F
+
+# Now do the checkpiont
+Checkpoint-Computer -Description "Freshly installed system pre-debloat"
+
+# Set the checkpoint interval back to default
+REG DELETE "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SystemRestore" /V "SystemRestorePointCreationFrequency" /F
 
 ```
 
@@ -53,30 +68,38 @@ https://github.com/builtbybel/BloatyNosy/releases/latest
 PowerShell
 ```
 wget https://dl5.oo-software.com/files/ooshutup10/OOSU10.exe -OutFile ~\Downloads\OOSU10.exe
+wget https://raw.githubusercontent.com/sylverpyro/windows-debloat-and-optout/main/ooshutup10.cfg -OutFile ~\Downloads\ooshutup10.cfg
 
 ```
 
 # Make sure bloat store apps are gone
 ```
 $remove_list = @(
+  "Feedback Hub"
+  "Gaming Services"
   "Get Help"
   "HEIF Image Extensions"
-  "Raw Image Extension"
+  "Mail and Calendar"
+  "Microsoft Accessory Center"
+  "Microsoft GameInput"
+  "Microsoft Teams"
   "Microsoft To Do"
-  "VP9 Video Extensions"
+  "Microsoft Update Health Tools"
+  "Microsoft Whiteboard"
+  "Movies & TV"
+  "MPEG-2 Video Extension"
+  "Power Automate"    
+  "Raw Image Extension"  
+  "VP9 Video Extensions"  
   "Web Media Extensions"
   "Webp Image Extensions"
   "Windows Clock"
-  "Feedback Hub"
-  "Windows Maps"
+  "Windows Maps"  
   "Xbox TCUI"
   "Xbox Game Bar Plugin"
   "Xbox Game Bar"
   "Xbox Game Speech Window"
-  "Your Phone"
-  "Movies & TV"
-  "Mail and Calendar"
-  "Microsoft Update Health Tools"
+  "Your Phone" 
 )
 
 foreach ($app in $remove_list) {
@@ -159,8 +182,9 @@ sc config RetailDemo start= disabled
 ```
 # OPTIONAL service disabling
 
-## Disabling the Diagnostics Tracking Service
+## OPTIONAL: Disabling the Diagnostics Tracking Service
 If you use the diagnostic troubleshooter DO NOT run these
+
 PowerShell:
 ```
 Stop-Service "DiagTrack"
@@ -175,15 +199,16 @@ sc config WMPNetworkSvc start= disabled
 
 ```
 
-## Disable Shared account manager
+## OPTIONAL: Disable Shared account manager
 cmd.exe
 ```
 sc config shpamsvc start= disabled
 
 ```
 
-## Diable XBox services EXCEPT AUTH manager
+## OPTIONAL: Diable XBox services EXCEPT AUTH manager
 **WARNING** If you play games through XBox Live, do NOT disable these
+
 cmd.exe
 ```
 sc config XboxNetApiSvc start= disabled
@@ -194,22 +219,22 @@ sc config XblGameSave start= disabled
 
 ```
 
-## Disable xbox auth service
-If you play any games (Minecraft) that require a microsoft account, DO NOT disable this
+## OPTIONAL: Disable xbox auth service
+**WARNING** If you play any games (Minecraft) that require a microsoft account, DO NOT disable this
+
 cmd.exe
 ```
 sc config XblAuthManager start= disabled
 
 ```
 
-## Disable Bitlocker
+## OPTIONAL: Disable Bitlocker
 **WARNING** Don't run this if you encrypt your drive with bitlocker
 cmd.exe
 ```
 sc config BDESVC start= disabled
 
 ```
-
 
 # Fully remove IE 11
 ```
@@ -218,11 +243,13 @@ DISM /Online /Remove-Capability /CapabilityName:Browser.InternetExplorer~~~~0.0.
 ```
 
 # Remove MS Edge
+**WARNING** Do not remove MS Edge unless you know you 1) Have another web browser or 2) Know how to install one via the command line (otherwise you'll have no web browsers left)
 **NOTE** Not recommended, but if you really want to do it, use *ShaowWhisperer*'s script here
 https://github.com/ShadowWhisperer/Remove-Edge-Chromium/archive/refs/heads/main.zip
 
 # Remove legacy 'malicious software removal tool' (replaced by MS Defender)
 **WARNING** this does not truly remove the tool, just makes it so the OS can never execute it.  It's a poor solution, but there's no way to fully remove the tool at this time.  If this doesn't sound good to you,  just leave it be. 
+
 cmd.exe
 ```
 cd /d %windir%\System32
@@ -233,6 +260,7 @@ del /f /q MRT.exe
 ```
 
 # Remove useless scheduled tasks
+PowerShell
 ```
 Import-Module ScheduledTasks
 Get-ScheduledTask  XblGameSaveTaskLogon | Disable-ScheduledTask
@@ -245,6 +273,7 @@ Get-ScheduledTask  DmClientOnScenarioDownload | Disable-ScheduledTask
 ```
 
 # Remove wordpad
+PowerShell
 ```
 DISM /Online /Remove-Capability /CapabilityName:Microsoft.Windows.WordPad~~~~0.0.1.0
 
