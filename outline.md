@@ -56,8 +56,34 @@ wget https://dl5.oo-software.com/files/ooshutup10/OOSU10.exe -OutFile ~\Download
 
 ```
 
-# Reboot again!
-The above applicationns make a lot of changes that will only take effect on the next reboot and we want a known state before we mess with more settings
+# Make sure bloat store apps are gone
+```
+$remove_list = @(
+  "Get Help"
+  "HEIF Image Extensions"
+  "Raw Image Extension"
+  "Microsoft To Do"
+  "VP9 Video Extensions"
+  "Web Media Extensions"
+  "Webp Image Extensions"
+  "Windows Clock"
+  "Feedback Hub"
+  "Windows Maps"
+  "Xbox TCUI"
+  "Xbox Game Bar Plugin"
+  "Xbox Game Bar"
+  "Xbox Game Speech Window"
+  "Your Phone"
+  "Movies & TV"
+  "Mail and Calendar"
+  "Microsoft Update Health Tools"
+)
+
+foreach ($app in $remove_list) {
+  winget uninstall --name "$app"
+}
+
+```
 
 # Remove optional features packages that are not already intalled
 PowerShell (admin)
