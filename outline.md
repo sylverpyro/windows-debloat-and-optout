@@ -308,9 +308,10 @@ $winget_install_list = @(
   "qBittorrent.qBittorrent"
   "Nvidia.GeForceExperience"
   "Zoom.Zoom"
+  "Microsoft.VisualStudioCode"
 )
 
-foreach (app in $winget_install_list) {
+foreach ($app in $winget_install_list) {
   winget install --id $app
 }
 ```
