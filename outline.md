@@ -358,18 +358,11 @@ $winget_install_list = @(
   "Git.Git"
   "WinDirStat.WinDirStat"
   "7zip.7zip"
-  "qBittorrent.qBittorrent"
   "Nvidia.GeForceExperience"
   "Valve.Steam"
-  "Ubisoft.Connect"
-  "Amazon.Games"
   "GOG.Galaxy"
   "EpicGames.EpicGamesLauncher"
-  "ItchIo.Itch"
-  "HumbleBundle.HumbleApp"
-  "CiderCollective.Cider"
   "VideoLAN.VLC"
-  "Zoom.Zoom"
   "Discord.Discord"
 )
 
@@ -378,3 +371,33 @@ foreach ($app in $winget_install_list) {
 }
 
 ```
+
+## Extra apps
+```
+$winget_extras_list = @(
+  "qBittorrent.qBittorrent"
+  "CiderCollective.Cider"
+  "Zoom.Zoom"
+)
+
+foreach ($app in $winget_extras_list) {
+  winget install --id $app
+}
+
+```
+
+## Extra Game Stores
+```
+$winget_extras_list = @(
+  "Ubisoft.Connect"
+  "Amazon.Games"
+  "ItchIo.Itch"
+  "HumbleBundle.HumbleApp"
+)
+
+foreach ($app in $winget_extras_list) {
+  winget install --id $app
+}
+
+```
+
