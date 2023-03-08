@@ -201,10 +201,12 @@ DISM /Online /Remove-Capability /CapabilityName:Microsoft.Windows.WordPad~~~~0.0
 
 # Disable apps running in background
 **WARNING** This will stop all MS Store apps from running unless explicitly launched by the user.  This includes, but is not limited to, alarms and reminders.  If you use features of any application that you don't launch youself/live in the system tray, DO NOT run this.  
+
 [HKEYCURRENTUSER\SOFTWARE\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications]
 "GlobalUserDisabled"=dword:00000001
-
+```
 REG ADD "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications" /V "GlobalUserDisabled" /T REG_DWORD /D 00000001 /F
+```
 
 # Always show file extensions
 [HKEYCURRENTUSER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced]
