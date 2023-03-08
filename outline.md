@@ -287,6 +287,30 @@ REG DELETE "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SystemRestore" /V 
 ```
 
 # Install main application stack
-```winget_install_list="brave.brave, notepad++.notepad++" 
-foreach app in $winget_install_list; do print-output "Installing app: $app"; winget install --id $app
+```
+$winget_install_list = @(
+  "brave.brave"
+  "notepad++.notepad++"
+  "Discord.Discord"
+  "Git.Git"
+  "Mozilla.Firefox"
+  "WinDirStat.WinDirStat"
+  "Valve.Steam"
+  "Ubisoft.Connect"
+  "Amazon.Games"
+  "GOG.Galaxy"
+  "EpicGames.EpicGamesLauncher"
+  "ItchIo.Itch"
+  "HumbleBundle.HumbleApp"
+  "CiderCollective.Cider"
+  "VideoLAN.VLC"
+  "7zip.7zip"
+  "qBittorrent.qBittorrent"
+  "Nvidia.GeForceExperience"
+  "Zoom.Zoom"
+)
+
+foreach (app in $winget_install_list) {
+  winget install --id $app
+}
 ```
