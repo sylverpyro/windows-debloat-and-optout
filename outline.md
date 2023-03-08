@@ -12,27 +12,38 @@ This is the outline doc for the process.  It includes executable code snips as w
 - https://devblogs.microsoft.com/powershell-community/how-to-update-or-add-a-registry-key-value-with-powershell/ - for powershell regedit code
 - https://www.tenforums.com/tutorials/94682-change-system-restore-point-creation-frequency-windows-10-a.html - For simpler regedit code and syste restore point frequncy modifications
 
+# Allow powershell script execution
+Literaly everything in this requires script execution
+```
+Set-ExecutionPolicy RemoteSigned
+
+```
+
 # Update the OS 
 This is required to do anything as winget is hidden in the windows updates)
 PowerShell (admin)
 ```
+Import-Module PowerShellGet
 Install-Module PSWindowsUpdate 
 Add-WUServiceManager -MicrosoftUpdate
 Get-WindowsUpdate
-Install-WindowsUpdate
+Install-WindowsUpdate -AcceptAll
+
 ```
-Once all upates are installed REBOOT
+Once all upates are installed accept the prompt to reboot
 
 # Create a system restore point before doing ANYTHING
 PowerShell (admin)
 ```
-Checkpoint-Computer -Description "Before debloating tools"
+Checkpoint-Computer -Description "Fresh updated system before debloating tools"
+
 ```
 
 # Get and run Win10 Debloater
 PowerShell
 ```
 wget https://github.com/Sycnex/Windows10Debloater/archive/refs/heads/master.zip -OutFile ~\Downloads\Win10Debloater-sycnex.zip
+
 ```
 
 # Get and run BloatyNoisy
@@ -42,6 +53,7 @@ https://github.com/builtbybel/BloatyNosy/releases/latest
 PowerShell
 ```
 wget https://dl5.oo-software.com/files/ooshutup10/OOSU10.exe -OutFile ~\Downloads\OOSU10.exe
+
 ```
 
 # Reboot again!
@@ -51,6 +63,7 @@ The above applicationns make a lot of changes that will only take effect on the 
 PowerShell (admin)
 ```
 dism /online /cleanup-image /StartComponentCleanup /ResetBase
+
 ```
 
 # Stop and disable WAP Push Service
@@ -58,6 +71,7 @@ Powershell (admin)
 ```
 Stop-Service "dmwappushservice"
 Set-Service "dmwappushservice" -StartupType Disabled
+
 ```
 # Disable various useless services for home devices
 cmd.exe (admin)
@@ -115,6 +129,7 @@ sc config TapiSrv start= disabled
 sc config Fax start= disabled
 sc config lfsvc start= disabled
 sc config RetailDemo start= disabled
+
 ```
 # OPTIONAL service disabling
 
@@ -124,18 +139,21 @@ PowerShell:
 ```
 Stop-Service "DiagTrack"
 Set-Service "DiagTrack" -StartupType Disabled
+
 ```
 Then cmd.exe:
 ```
 sc config DiagTrack start= disabled
 sc config diagnosticshub.standardcollector.service start= disabled
 sc config WMPNetworkSvc start= disabled
+
 ```
 
 ## Disable Shared account manager
 cmd.exe
 ```
 sc config shpamsvc start= disabled
+
 ```
 
 ## Diable XBox services EXCEPT AUTH manager
@@ -147,6 +165,7 @@ sc config XboxGipSvc start= disabled
 sc config xboxgip start= disabled
 sc config xbgm start= disabled
 sc config XblGameSave start= disabled
+
 ```
 
 ## Disable xbox auth service
@@ -154,6 +173,7 @@ If you play any games (Minecraft) that require a microsoft account, DO NOT disab
 cmd.exe
 ```
 sc config XblAuthManager start= disabled
+
 ```
 
 ## Disable Bitlocker
@@ -161,12 +181,14 @@ sc config XblAuthManager start= disabled
 cmd.exe
 ```
 sc config BDESVC start= disabled
+
 ```
 
 
 # Fully remove IE 11
 ```
 DISM /Online /Remove-Capability /CapabilityName:Browser.InternetExplorer~~~~0.0.11.0
+
 ```
 
 # Remove MS Edge
@@ -181,6 +203,7 @@ cd /d %windir%\System32
 takeown /f MRT.exe
 icacls MRT.exe /grant:r "%username%":D
 del /f /q MRT.exe
+
 ```
 
 # Remove useless scheduled tasks
@@ -192,11 +215,13 @@ Get-ScheduledTask  Consolidator | Disable-ScheduledTask
 Get-ScheduledTask  UsbCeip | Disable-ScheduledTask
 Get-ScheduledTask  DmClient | Disable-ScheduledTask
 Get-ScheduledTask  DmClientOnScenarioDownload | Disable-ScheduledTask
+
 ```
 
 # Remove wordpad
 ```
 DISM /Online /Remove-Capability /CapabilityName:Microsoft.Windows.WordPad~~~~0.0.1.0
+
 ```
 
 # Disable apps running in background
@@ -206,6 +231,7 @@ DISM /Online /Remove-Capability /CapabilityName:Microsoft.Windows.WordPad~~~~0.0
 "GlobalUserDisabled"=dword:00000001
 ```
 REG ADD "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications" /V "GlobalUserDisabled" /T REG_DWORD /D 00000001 /F
+
 ```
 
 # Always show file extensions
@@ -213,6 +239,7 @@ REG ADD "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\BackgroundAccessApplicat
 "HideFileExt"=dword:00000000
 ```
 REG ADD "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /V "HideFileExt" /T REG_DWORD /D 00000000 /F
+
 ```
 
 # Disable the '- Shortcut' suffix on all shortcuts
@@ -230,6 +257,7 @@ If (-NOT (Test-Path $RegistryPath)) {
 }  
 # Now set the value
 New-ItemProperty -Path $RegistryPath -Name $Name -Value $Value -PropertyType $Type -Force 
+
 ```
 
 # Disable legacy NTFS 8.3 name retention
@@ -237,6 +265,7 @@ New-ItemProperty -Path $RegistryPath -Name $Name -Value $Value -PropertyType $Ty
 "NtfsDisable8dot3NameCreation"=dword:00000003
 ```
 REG ADD "HKLM\SYSTEM\CurrentControlSet\Control\FileSystem" /V "NtfsDisable8dot3NameCreation" /T REG_DWORD /D 00000003 /F
+
 ```
 
 # Show checkboxes in explorer for files/folders
@@ -244,6 +273,7 @@ REG ADD "HKLM\SYSTEM\CurrentControlSet\Control\FileSystem" /V "NtfsDisable8dot3N
 "AutoCheckSelect"=dword:00000001
 ```
 REG ADD "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /V "AutoCheckSelect" /T REG_DWORD /D 00000001 /F
+
 ```
 
 
@@ -252,6 +282,7 @@ REG ADD "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /V "A
 "FullPath"=dword:00000001
 ```
 REG ADD "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\CabinetState" /V "FullPath" /T REG_DWORD /D 00000001 /F
+
 ```
 
 # Disable explorer 'help' key
@@ -260,6 +291,7 @@ REG ADD "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\CabinetState" /
 taskkill /f /im HelpPane.exe
 takeown /f %WinDir%\HelpPane.exe
 icacls %WinDir%\HelpPane.exe /deny Everyone:(X)
+
 ```
 
 # Disable Hibernation
@@ -267,6 +299,7 @@ icacls %WinDir%\HelpPane.exe /deny Everyone:(X)
 **NOTE** If you are on a laptop you probablay DO NOT want to turn this off
 ```
 powercfg -h off
+
 ```
 
 # Reboot again
@@ -277,26 +310,30 @@ Now that you have a clean base to start installing on top of, good idea to make 
 Because windows by default does not allow more than 1 checkpint every 24 hours, we have to change the checkpiont interval in regedit before we can run this second checkpoint.  
 **NOTE** If you do run this, after the checkpioint is complete, set the checkpoint back to it's default value
 ```
+# Remove the checkpoint interval entierly
 REG ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SystemRestore" /V "SystemRestorePointCreationFrequency" /T REG_DWORD /D 0 /F
 
 # Now do the checkpiont
 Checkpoint-Computer -Description "Clean base"
-```
 
-Once the checkpiont is complete, set the value back
-```
+# Set the checkpoint interval back to default
 REG DELETE "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SystemRestore" /V "SystemRestorePointCreationFrequency" /F
+
 ```
 
-# Install main application stack
+# Install main application stacks
+**NOTE** If you don't want a particular application, remove it from the list
 ```
 $winget_install_list = @(
   "brave.brave"
-  "notepad++.notepad++"
-  "Discord.Discord"
-  "Git.Git"
   "Mozilla.Firefox"
+  "Microsoft.VisualStudioCode"
+  "notepad++.notepad++"
+  "Git.Git"
   "WinDirStat.WinDirStat"
+  "7zip.7zip"
+  "qBittorrent.qBittorrent"
+  "Nvidia.GeForceExperience"
   "Valve.Steam"
   "Ubisoft.Connect"
   "Amazon.Games"
@@ -306,14 +343,12 @@ $winget_install_list = @(
   "HumbleBundle.HumbleApp"
   "CiderCollective.Cider"
   "VideoLAN.VLC"
-  "7zip.7zip"
-  "qBittorrent.qBittorrent"
-  "Nvidia.GeForceExperience"
   "Zoom.Zoom"
-  "Microsoft.VisualStudioCode"
+  "Discord.Discord"
 )
 
 foreach ($app in $winget_install_list) {
   winget install --id $app
 }
+
 ```
