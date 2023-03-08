@@ -1,19 +1,24 @@
-# This is the outline doc for the process.  It includes executable code snips
-# as well as manual steps that need to be taken.  Eventually these will
-# get converted into a comprehensive powershell script, but function first
+# Preamble
+This is the outline doc for the process.  It includes executable code snips as well as manual steps that need to be taken.  Eventually these will get converted into a comprehensive powershell script, but function first
+
+# NOTES
+- Some commands are powerShell while others are CMD shell commands.  Make sure you run the command in the correct environment or it will not work at all.
 
 # Sources and credits
-# https://dl5.oo-software.com - Shutup and OptOut 10+
-# https://github.com/builtbybel/BloatyNosy/releases - BloatyNoisy
-# https://github.com/Sycnex/Windows10Debloater - Various code snippits
-# https://github.com/5cover/WinClean - Various code snippits
+- https://dl5.oo-software.com - Shutup and OptOut 10+
+- https://github.com/builtbybel/BloatyNosy/releases - BloatyNoisy
+- https://github.com/Sycnex/Windows10Debloater - Various code snippits
+- https://github.com/5cover/WinClean - Various code snippits
 
-# Update the OS (required to do anything)
-win+x , A (admin terminal)
+# Update the OS 
+This is required to do anything as winget is hidden in the windows updates)
+```win+x , A (admin terminal)
 Install-Module PSWindowsUpdate 
 Add-WUServiceManager -MicrosoftUpdate
 Get-WindowsUpdate
 Install-WindowsUpdate
+```
+Once all upates are installed REBOOT
 
 # Create a system restore point!
 Win menu: system restore
@@ -24,12 +29,13 @@ https://github.com/builtbybel/BloatyNosy/releases
 # Get and run Opt out and ShutUp 11
 https://dl5.oo-software.com/files/ooshutup10/OOSU10.exe
 
-# Get rid of more crap
+# Reboot again!
+BloatyNoisy and OOSU10 both make a lot of changes that will only take effect on the next reboot and we want a known state before we mess with more settings
 
-## Remove optional features packages that are not already intalled
-dism /online /cleanup-image /StartComponentCleanup /ResetBase
+# Remove optional features packages that are not already intalled
+```dism /online /cleanup-image /StartComponentCleanup /ResetBase```
 
-## Disable all ads
+# Disable all ads
 Windows Registry Editor Version 5.00
 
 [HKEYCURRENTUSER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager]
@@ -55,7 +61,7 @@ Windows Registry Editor Version 5.00
 
 # Disable hyper-v services
 cmd.exe
-sc config vmicshutdown start= disabled
+```sc config vmicshutdown start= disabled
 sc config vmicrdv start= disabled
 sc config vmicvmsession start= disabled
 sc config vmicheartbeat start= disabled
@@ -66,9 +72,10 @@ sc config gencounter start= disabled
 sc config vmgid start= disabled
 sc config storflt start= disabled
 sc config vmicvss start= disabled
+```
 
 # Disable network and buisness services
-sc config TrkWks start= disabled
+```sc config TrkWks start= disabled
 sc config lmhosts start= disabled
 sc config NetTcpPortSharing start= disabled
 sc config Netlogon start= disabled
@@ -82,16 +89,18 @@ sc config RemoteRegistry start= disabled
 sc config workfolderssvc start= disabled
 sc config TlntSvr start= disabled
 sc config ssh-agent start= disabled
+```
 
 # Disable Smart Card services
-sc config SCardSvr start= disabled
+```sc config SCardSvr start= disabled
 sc config ScDeviceEnum start= disabled
 sc config scfilter start= disabled
 sc config SCPolicySvc start= disabled
 sc config applockerfltr start= disabled
+```
 
 # Disable telemetry and data collection services
-Import-Module Microsoft.PowerShell.Management
+```Import-Module Microsoft.PowerShell.Management
 Import-Module ScheduledTasks
 
 # Disables Windows Feedback Experience
@@ -198,7 +207,7 @@ If (!(Test-Path $People)) {
 }
 Set-ItemProperty $People  PeopleBand -Value 0
 
-# Disables scheduled tasks that are considered unnecessary
+# Disable scheduled tasks that are considered unnecessary
 Write-Output "Disabling scheduled tasks"
 Get-ScheduledTask  XblGameSaveTaskLogon | Disable-ScheduledTask
 Get-ScheduledTask  XblGameSaveTask | Disable-ScheduledTask
@@ -206,51 +215,63 @@ Get-ScheduledTask  Consolidator | Disable-ScheduledTask
 Get-ScheduledTask  UsbCeip | Disable-ScheduledTask
 Get-ScheduledTask  DmClient | Disable-ScheduledTask
 Get-ScheduledTask  DmClientOnScenarioDownload | Disable-ScheduledTask
+```
 
 # Stop and disable WAP Push Service
-Stop-Service "dmwappushservice"
+```Stop-Service "dmwappushservice"
 Set-Service "dmwappushservice" -StartupType Disabled
-
-# OPTIONAL Disabling the Diagnostics Tracking Service
-Stop-Service "DiagTrack"
-Set-Service "DiagTrack" -StartupType Disabled
+```
 
 # Disable Bitlocker
-cmd.exe
+Don't run this if you encrypt your drive with bitlocker
+```cmd.exe
 sc config BDESVC start= disabled
+```
 
 # Disable windows maps
-sc config MapsBroker start= disabled
+`sc config MapsBroker start= disabled`
 
 # Disable parental controls
-sc config WpcMonSvc start= disabled
+`sc config WpcMonSvc start= disabled`
 
 # Disable mobile hotspot service (hotspot hosting)
-sc config icssvc start= disabled
+`sc config icssvc start= disabled`
 
 # Disable other useless services
-sc config WebClient start= disabled
+```sc config WebClient start= disabled
 sc config PhoneSvc start= disabled
 sc config TapiSrv start= disabled
 sc config Fax start= disabled
 sc config lfsvc start= disabled
 sc config RetailDemo start= disabled
+```
+# OPTIONAL Disabling the Diagnostics Tracking Service
+If you use the diagnostic troubleshooter DO NOT run this
+```PowerShell:
+Stop-Service "DiagTrack"
+Set-Service "DiagTrack" -StartupType Disabled
 
-## OPtiONAL: Disable Microsoft diagnotics service
+Then cmd.exe:
 sc config DiagTrack start= disabled
 sc config diagnosticshub.standardcollector.service start= disabled
 sc config WMPNetworkSvc start= disabled
+```
 
 ## OPTIONAL: Disable Shared account manager
-sc config shpamsvc start= disabled
+`sc config shpamsvc start= disabled`
 
-# Diable XBox services
-sc config XboxNetApiSvc start= disabled
+# Diable XBox services EXCEPT AUTH manager
+If you play games through XBox Live, do NOT disable these
+```sc config XboxNetApiSvc start= disabled
 sc config XboxGipSvc start= disabled
 sc config xboxgip start= disabled
 sc config xbgm start= disabled
-sc config XblAuthManager start= disabled
 sc config XblGameSave start= disabled
+```
+
+# OPTIONAL disable xbox auth service
+If you play any games (Minecraft) that require a microsoft account, DO NOT disable this
+```sc config XblAuthManager start= disabled```
 
 # Keep thumbnail caches between reboots
 Windows Registry Editor Version 5.00
@@ -260,7 +281,7 @@ Windows Registry Editor Version 5.00
 "Autorun"=dword:00000000
 
 # Fully remove Cortana
-Import-Module Microsoft.PowerShell.Management
+```Import-Module Microsoft.PowerShell.Management
 Import-Module Appx
 
 $Cortana1 = "HKCU:\SOFTWARE\Microsoft\Personalization\Settings"
@@ -280,11 +301,13 @@ If (!(Test-Path $Cortana3)) {
 }
 Set-ItemProperty $Cortana3 HarvestContacts -Value 0
 Get-AppxPackage -allusers Microsoft.549981C3F5F10 | Remove-AppxPackage
+```
 
 # Fully remove IE 11
-DISM /Online /Remove-Capability /CapabilityName:Browser.InternetExplorer~~~~0.0.11.0
+`DISM /Online /Remove-Capability /CapabilityName:Browser.InternetExplorer~~~~0.0.11.0`
 
 # Remove legacy 'malicious software removal tool' (replaced by MS Defender)
+**WARNING** this does not truly remove the tool, just makes it so the OS can never execute it.  It's a poor solution, but there's no way to fully remove the tool at this time.  If this doesn't sound good to you,  just leave it be. 
 cmd.exe
 cd /d %windir%\System32
 takeown /f MRT.exe
@@ -293,7 +316,7 @@ del /f /q MRT.exe
 
 # Purge appx packages (NOT MS Store!)
 # Based on https://github.com/Sycnex/Windows10Debloater/blob/master/Individual%20Scripts/Debloat%20Windows
-Import-Module Microsoft.PowerShell.Core
+```
 Import-Module Appx
 Import-Module DISM
 $AppXApps = @(
@@ -344,26 +367,29 @@ Get-AppxPackage -Name $App | Remove-AppxPackage -ErrorAction SilentlyContinue
 Get-AppxPackage -Name $App -AllUsers | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue
 Get-AppxProvisionedPackage -Online | Where-Object DisplayName -like $App | Remove-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue
 }
+```
+# Remove ALL AppxPackages
+**WARNING** This will remove ALL applications from the Microsoft store that are not in the allow list!
+**DO NOT RUN THIS if you have already installed applications from the MS Store! They will be removed!**
+ - Credit to /u/GavinEke for a modified version of my whitelist code
+```[regex]$AllowlistedApps = 'Microsoft.WindowsStore|NVIDIACorp.NVIDIAControlPanel|Microsoft.WindowsTerminal|Microsoft.Paint|Microsoft.Windows.Photos|Microsoft.Paint3D|Microsoft.WindowsCalculator|Microsoft.WindowsStore|Microsoft.Windows.Photos|CanonicalGroupLimited.UbuntuonWindows|Microsoft.XboxGameCallableUI|Microsoft.XboxGamingOverlay|Microsoft.Xbox.TCUI|Microsoft.XboxGamingOverlay|Microsoft.XboxIdentityProvider|Microsoft.MicrosoftStickyNotes|Microsoft.MSPaint*'
+Get-AppxPackage -AllUsers | Where-Object {$_.Name -NotMatch $AllowlistedApps} | Remove-AppxPackage
+Get-AppxPackage | Where-Object {$_.Name -NotMatch $AllowlistedApps} | Remove-AppxPackage
+Get-AppxProvisionedPackage -Online | Where-Object {$_.PackageName -NotMatch $AllowlistedApps} | Remove-AppxProvisionedPackage -Online
+```
 
-# Removes AppxPackages
-# Credit to /u/GavinEke for a modified version of my whitelist code
-[regex]$WhitelistedApps = 'Microsoft.WindowsStore|NVIDIACorp.NVIDIAControlPanel|Microsoft.WindowsTerminal|Microsoft.Paint|Microsoft.Windows.Photos|Microsoft.Paint3D|Microsoft.WindowsCalculator|Microsoft.WindowsStore|Microsoft.Windows.Photos|CanonicalGroupLimited.UbuntuonWindows|Microsoft.XboxGameCallableUI|Microsoft.XboxGamingOverlay|Microsoft.Xbox.TCUI|Microsoft.XboxGamingOverlay|Microsoft.XboxIdentityProvider|Microsoft.MicrosoftStickyNotes|Microsoft.MSPaint*'
-Get-AppxPackage -AllUsers | Where-Object {$_.Name -NotMatch $WhitelistedApps} | Remove-AppxPackage
-Get-AppxPackage | Where-Object {$_.Name -NotMatch $WhitelistedApps} | Remove-AppxPackage
-Get-AppxProvisionedPackage -Online | Where-Object {$_.PackageName -NotMatch $WhitelistedApps} | Remove-AppxProvisionedPackage -Online
-
-
-# Remove scheduled tasks
-Import-Module ScheduledTasks
+# Remove useless scheduled tasks
+```Import-Module ScheduledTasks
 Get-ScheduledTask  XblGameSaveTaskLogon | Disable-ScheduledTask
 Get-ScheduledTask  XblGameSaveTask | Disable-ScheduledTask
 Get-ScheduledTask  Consolidator | Disable-ScheduledTask
 Get-ScheduledTask  UsbCeip | Disable-ScheduledTask
 Get-ScheduledTask  DmClient | Disable-ScheduledTask
 Get-ScheduledTask  DmClientOnScenarioDownload | Disable-ScheduledTask
+```
 
 # Remove wordpad
-DISM /Online /Remove-Capability /CapabilityName:Microsoft.Windows.WordPad~~~~0.0.1.0
+`DISM /Online /Remove-Capability /CapabilityName:Microsoft.Windows.WordPad~~~~0.0.1.0`
 
 # Disable apps running in background
 Windows Registry Editor Version 5.00
@@ -373,8 +399,7 @@ Windows Registry Editor Version 5.00
 
 # Remove MS Edge
 ## Modified version of Shadow Whisperer's Remove-Edge-Chromium script. See https://github.com/ShadowWhisperer/Remove-Edge-Chromium
-
-## Stop Edge Task
+```## Stop Edge Task
 taskkill /im "msedge.exe" /f  >nul 2>&1
 
 ##Do not install Edge from Windows Updates (Does not appear to work anymore)
@@ -407,7 +432,7 @@ for /f "delims=" %%a in ('dir /b "C:\Users"') do (
 del /S /Q "C:\Users\%%a\Desktop\edge.lnk" >nul 2>&1
 del /S /Q "C:\Users\%%a\Desktop\Microsoft Edge.lnk" >nul 2>&1
 )
-
+```
 
 # Always show file extensions
 Windows Registry Editor Version 5.00
@@ -416,12 +441,16 @@ Windows Registry Editor Version 5.00
 "HideFileExt"=dword:00000000
 
 # Disable explorer 'help' key
-taskkill /f /im HelpPane.exe
+**WARNING** This does not remove the help tool, just makes it so the OS can no longer execute it.  If this sounds bad to you, just don't run this
+```taskkill /f /im HelpPane.exe
 takeown /f %WinDir%\HelpPane.exe
 icacls %WinDir%\HelpPane.exe /deny Everyone:(X)
+```
 
-# Disable Hibernation (not for laptops)
-powercfg -h off
+# Disable Hibernation
+**NOTE** You only want this if you have an SSD or NVME drive as your boot drive.  
+**NOTE** If you are on a laptop you probablay DO NOT want to turn this off
+```powercfg -h off```
 
 # Disable the '- Shortcut' suffix on all shortcuts
 Windows Registry Editor Version 5.00
@@ -459,6 +488,8 @@ Windows Registry Editor Version 5.00
 [HKEYCURRENTUSER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\CabinetState]
 "FullPath"=dword:00000001
 
-
 # Install main application stack
-winget_install_list="brave.brave, notepad++.notepad++" 
+```winget_install_list="brave.brave, notepad++.notepad++" 
+foreach app in $winget_install_list; do print-output "Installing app: $app"; winget install --id $app
+```
+```
