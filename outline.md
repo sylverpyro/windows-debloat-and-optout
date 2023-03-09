@@ -446,6 +446,9 @@ $playnite_stack = @(
   "Valve.Steam"
   "Playnite.Playnite"
 }
+foreach ($app in $playnite_stack) {
+  winget install --id $app
+}
 
 ```
 
