@@ -433,4 +433,20 @@ foreach ($app in $winget_extras_list) {
 }
 
 ```
+## Full Playnite Stack
+All game stores supported by PlayNite (except Battle.Net as it's not in winget yet)
+```
+$playnite_stack = @(
+  "Amazon.Games"
+  "EpicGames.EpicGamesLauncher"
+  "GOG.Galaxy"
+  "HumbleBundle.HumbleApp"
+  "ItchIo.Itch"
+  "Ubisoft.Connect"
+  "Valve.Steam"
+  "Playnite.Playnite"
+}
+
+```
+
 
