@@ -78,7 +78,6 @@ wget https://raw.githubusercontent.com/sylverpyro/windows-debloat-and-optout/mai
 $remove_list = @(
   "3D Viewer"
   "Feedback Hub"
-  "Gaming Services"
   "Get Help"
   "HEIF Image Extensions"
   "HEVC Video Extensions from Device Manufacturer"
@@ -120,6 +119,7 @@ $remove_list = @(
   "Xbox Game Bar"
   "Xbox Game Speech Window"
   "Microsoft GameInput"
+  "Gaming Services"
 )
 
 foreach ($app in $remove_list) {
