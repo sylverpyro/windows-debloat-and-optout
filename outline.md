@@ -40,6 +40,7 @@ Install-WindowsUpdate -AcceptAll
 Once all upates are installed accept the prompt to reboot
 
 # Create a system restore point before doing ANYTHING
+
 **NOTE** When a system update is done (like just before) it automatically creates a system restore point.  This is a problem as by default Windows only allows checkpoints every 24 hours.  To fix this we set a registry key to '0' to allow arbitrary checkpoints.  Remember to delete this key after the checkpoint is done. 
 PowerShell (admin)
 ```
@@ -75,6 +76,7 @@ wget https://raw.githubusercontent.com/sylverpyro/windows-debloat-and-optout/mai
 # Make sure bloat store apps are gone
 ```
 $remove_list = @(
+  "3D Viewer"
   "Feedback Hub"
   "Gaming Services"
   "Get Help"
@@ -82,13 +84,18 @@ $remove_list = @(
   "HEVC Video Extensions from Device Manufacturer"
   "Mail and Calendar"
   "Microsoft Accessory Center"
-  "Microsoft GameInput"
+  "Microsoft 365 (Office)"
+  "Microsoft Sticky Notes"
   "Microsoft Teams"
   "Microsoft To Do"
+  "Microsoft Family"
+  "Quick Assist"
   "Microsoft Update Health Tools"
   "Microsoft Whiteboard"
+  "Mixed Reality Portal"
   "Movies & TV"
   "MPEG-2 Video Extension"
+  "OneNote for Windows 10"
   "Power Automate"    
   "Raw Image Extension"  
   "VP9 Video Extensions"  
@@ -96,10 +103,6 @@ $remove_list = @(
   "Webp Image Extensions"
   "Windows Clock"
   "Windows Maps"  
-  "Xbox TCUI"
-  "Xbox Game Bar Plugin"
-  "Xbox Game Bar"
-  "Xbox Game Speech Window"
   "Your Phone" 
 )
 
@@ -108,6 +111,22 @@ foreach ($app in $remove_list) {
 }
 
 ```
+
+# If you don't play XBox Live/Store/GamePass games remove those too
+```
+$remove_list = @(
+  "Xbox TCUI"
+  "Xbox Game Bar Plugin"
+  "Xbox Game Bar"
+  "Xbox Game Speech Window"
+  "Microsoft GameInput"
+)
+
+foreach ($app in $remove_list) {
+  winget uninstall --name "$app"
+}
+ 
+  ```
 
 # Remove optional features packages that are not already intalled
 PowerShell (admin)
