@@ -7,42 +7,42 @@ This is the outline doc for the process.  It includes executable code snips as w
 # Sources and credits
 - https://dl5.oo-software.com - Shutup and OptOut 10+
 - https://github.com/builtbybel/BloatyNosy/releases - BloatyNoisy
+  - Same author, new app (in early preview): https://github.com/builtbybel/JunkCtrl
 - https://github.com/Sycnex/Windows10Debloater - Win10Debloater and Various code snippits
 - https://github.com/5cover/WinClean - Various code snippits (don't actually recommend running it)
 - https://devblogs.microsoft.com/powershell-community/how-to-update-or-add-a-registry-key-value-with-powershell/ - for powershell regedit code
 - https://www.tenforums.com/tutorials/94682-change-system-restore-point-creation-frequency-windows-10-a.html - For simpler regedit code and syste restore point frequncy modifications
 
 # Allow powershell script execution
-Literaly everything in this requires script execution
+Literaly everything in this requires script execution  
+`PowerShell (admin)`
 ```
 Set-ExecutionPolicy RemoteSigned
 
 ```
 
 # Update the OS 
-This is required to do anything as winget is hidden in the windows updates)
-
-Install the CLI update tool
-PowerShell (admin)
+This is required to do anything as winget is hidden in the windows updates)  
+Install the CLI update tool  
+`PowerShell (admin)`
 ```
 Import-Module PowerShellGet
 Install-Module PSWindowsUpdate 
 Add-WUServiceManager -MicrosoftUpdate
-```
-
-Run the update
-**NOTE** If no updates are shown, check the Windows Update section of 'settings' as it may have already downloaded all the available updates and is waiting for you to do a reboot
-```
 Get-WindowsUpdate
 Install-WindowsUpdate -AcceptAll
-
 ```
-Once all upates are installed accept the prompt to reboot
+**NOTE** If no updates are shown, check the Windows Update section of 'settings' as it may have already downloaded all the available updates and is waiting for you to do a reboot  
+Once all upates are installed accept the prompt to reboot  
 
 # Create a system restore point before doing ANYTHING
 
-**NOTE** When a system update is done (like just before) it automatically creates a system restore point.  This is a problem as by default Windows only allows checkpoints every 24 hours.  To fix this we set a registry key to '0' to allow arbitrary checkpoints.  Remember to delete this key after the checkpoint is done. 
-PowerShell (admin)
+When a system update is done (like just before) it automatically creates a system restore point  
+This is a problem as by default Windows only allows checkpoints every 24 hours  
+To fix this we set a registry key to '0' to allow arbitrary checkpoints  
+Remember to delete this key after the checkpoint is done  
+
+`PowerShell (admin)`
 ```
 # Remove the checkpoint interval entierly
 REG ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SystemRestore" /V "SystemRestorePointCreationFrequency" /T REG_DWORD /D 0 /F
@@ -56,24 +56,25 @@ REG DELETE "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SystemRestore" /V 
 ```
 
 # Get and run Win10 Debloater
-PowerShell
+`PowerShell`
 ```
 wget https://github.com/Sycnex/Windows10Debloater/archive/refs/heads/master.zip -OutFile ~\Downloads\Win10Debloater-sycnex.zip
-
 ```
 
 # Get and run BloatyNoisy
-https://github.com/builtbybel/BloatyNosy/releases/latest
+Manually download the latest release and run it  
+* https://github.com/builtbybel/BloatyNosy/releases/latest
 
 # Get and run Opt out and ShutUp 11
-PowerShell
+`PowerShell`
 ```
 wget https://dl5.oo-software.com/files/ooshutup10/OOSU10.exe -OutFile ~\Downloads\OOSU10.exe
 wget https://raw.githubusercontent.com/sylverpyro/windows-debloat-and-optout/main/ooshutup10.cfg -OutFile ~\Downloads\ooshutup10.cfg
 
 ```
 
-# Make sure bloat store apps are gone
+# Make sure bloatware store apps are gone
+`Powershell`
 ```
 $remove_list = @(
   "3D Viewer"
@@ -112,6 +113,8 @@ foreach ($app in $remove_list) {
 ```
 
 # If you don't play XBox Live/Store/GamePass games remove those too
+NOTE: These can be re-installed though the XBox app later, but is a huge pain  
+`Powershell`
 ```
 $remove_list = @(
   "Xbox TCUI"
@@ -129,21 +132,21 @@ foreach ($app in $remove_list) {
   ```
 
 # Remove optional features packages that are not already intalled
-PowerShell (admin)
+`PowerShell (admin)`
 ```
 dism /online /cleanup-image /StartComponentCleanup /ResetBase
 
 ```
 
 # Stop and disable WAP Push Service
-Powershell (admin)
+`Powershell (admin)`
 ```
 Stop-Service "dmwappushservice"
 Set-Service "dmwappushservice" -StartupType Disabled
 
 ```
 # Disable various useless services for home devices
-cmd.exe (admin)
+`cmd.exe (admin)`
 ```
 # Disable hyper-v services
 sc config vmicshutdown start= disabled
@@ -200,18 +203,17 @@ sc config lfsvc start= disabled
 sc config RetailDemo start= disabled
 
 ```
-# OPTIONAL service disabling
 
-## OPTIONAL: Disabling the Diagnostics Tracking Service
-If you use the diagnostic troubleshooter DO NOT run these
+# OPTIONAL: Disabling the Diagnostics Tracking Service
+If you use the diagnostic troubleshooter DO NOT run these  
 
-PowerShell:
+`PowerShell (admin)`
 ```
 Stop-Service "DiagTrack"
 Set-Service "DiagTrack" -StartupType Disabled
 
 ```
-Then cmd.exe:
+Then `cmd.exe (admin)`
 ```
 sc config DiagTrack start= disabled
 sc config diagnosticshub.standardcollector.service start= disabled
@@ -219,17 +221,18 @@ sc config WMPNetworkSvc start= disabled
 
 ```
 
-## OPTIONAL: Disable Shared account manager
-cmd.exe
+# OPTIONAL: Disable Shared account manager
+I'm honestly not sure what this does.  I figured it would disable having multiple user accounts availabe on a system, but this appears to not be the case and doesn't affect systems with multiple users that log into the desktop at all.  
+`cmd.exe (admin)`
 ```
 sc config shpamsvc start= disabled
 
 ```
 
-## OPTIONAL: Diable XBox services EXCEPT AUTH manager
-**WARNING** If you play games through XBox Live, do NOT disable these
+# OPTIONAL: Diable XBox services EXCEPT AUTH manager
+**WARNING** If you play games through XBox Live, do NOT disable these  
 
-cmd.exe
+`cmd.exe (admin)`
 ```
 sc config XboxNetApiSvc start= disabled
 sc config XboxGipSvc start= disabled
@@ -239,38 +242,44 @@ sc config XblGameSave start= disabled
 
 ```
 
-## OPTIONAL: Disable xbox auth service
-**WARNING** If you play any games (Minecraft) that require a microsoft account, DO NOT disable this
+# OPTIONAL: Disable xbox auth service
+**WARNING** If you play any games (Minecraft) that require a microsoft account, DO NOT disable this  
 
-cmd.exe
+`cmd.exe (admin)`
 ```
 sc config XblAuthManager start= disabled
 
 ```
 
-## OPTIONAL: Disable Bitlocker
-**WARNING** Don't run this if you encrypt your drive with bitlocker
-cmd.exe
+# OPTIONAL: Disable Bitlocker
+**WARNING** Don't run this if you encrypt your drive with bitlocker  
+`cmd.exe (admin)`
 ```
 sc config BDESVC start= disabled
 
 ```
 
 # Fully remove IE 11
+IE 11 has been superceeded by MS Edge, but it is still installed in the background
 ```
 DISM /Online /Remove-Capability /CapabilityName:Browser.InternetExplorer~~~~0.0.11.0
 
 ```
 
 # Remove MS Edge
-**WARNING** Do not remove MS Edge unless you know you 1) Have another web browser or 2) Know how to install one via the command line (otherwise you'll have no web browsers left)
-**NOTE** Not recommended, but if you really want to do it, use *ShaowWhisperer*'s script here
-https://github.com/ShadowWhisperer/Remove-Edge-Chromium/archive/refs/heads/main.zip
+**NOTE** Not recommended, but if you really want to do it, use *ShaowWhisperer*'s script here  
+
+**WARNING** Do not remove MS Edge unless you know you  
+  1. Have another web browser or 
+  2. Know how to install one via the command line (otherwise you'll have no web browsers left)
+
+Download and run:  
+* https://github.com/ShadowWhisperer/Remove-Edge-Chromium/archive/refs/heads/main.zip
 
 # Remove legacy 'malicious software removal tool' (replaced by MS Defender)
-**WARNING** this does not truly remove the tool, just makes it so the OS can never execute it.  It's a poor solution, but there's no way to fully remove the tool at this time.  If this doesn't sound good to you,  just leave it be. 
+**WARNING** this does not truly remove the tool, just makes it so the OS can never execute it.  It's a poor solution, but there's no way to fully remove the tool at this time.  If this doesn't sound good to you,  just leave it be.  
 
-cmd.exe
+`cmd.exe (admin)`
 ```
 cd /d %windir%\System32
 takeown /f MRT.exe
@@ -280,11 +289,9 @@ del /f /q MRT.exe
 ```
 
 # Remove useless scheduled tasks
-PowerShell
+`PowerShell (admin)`
 ```
 Import-Module ScheduledTasks
-Get-ScheduledTask  XblGameSaveTaskLogon | Disable-ScheduledTask
-Get-ScheduledTask  XblGameSaveTask | Disable-ScheduledTask
 Get-ScheduledTask  Consolidator | Disable-ScheduledTask
 Get-ScheduledTask  UsbCeip | Disable-ScheduledTask
 Get-ScheduledTask  DmClient | Disable-ScheduledTask
@@ -292,8 +299,17 @@ Get-ScheduledTask  DmClientOnScenarioDownload | Disable-ScheduledTask
 
 ```
 
+# OPTIONAL: Remove XBox Game sync schedule tasks
+Only do this if you DO NOT play Games though the XBox Games service  
+`PowerShell (admin)`
+```
+Import-Module ScheduledTasks
+Get-ScheduledTask  XblGameSaveTaskLogon | Disable-ScheduledTask
+Get-ScheduledTask  XblGameSaveTask | Disable-ScheduledTask
+```
+
 # Remove wordpad
-PowerShell
+`PowerShell (admin)`
 ```
 DISM /Online /Remove-Capability /CapabilityName:Microsoft.Windows.WordPad~~~~0.0.1.0
 
@@ -302,24 +318,21 @@ DISM /Online /Remove-Capability /CapabilityName:Microsoft.Windows.WordPad~~~~0.0
 # Disable apps running in background
 **WARNING** This will stop all MS Store apps from running unless explicitly launched by the user.  This includes, but is not limited to, alarms and reminders.  If you use features of any application that you don't launch youself/live in the system tray, DO NOT run this.  
 
-[HKEYCURRENTUSER\SOFTWARE\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications]
-"GlobalUserDisabled"=dword:00000001
+`PowerShell (admin)`
 ```
 REG ADD "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications" /V "GlobalUserDisabled" /T REG_DWORD /D 00000001 /F
 
 ```
 
 # Always show file extensions
-[HKEYCURRENTUSER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced]
-"HideFileExt"=dword:00000000
+`PowerShell (admin)`
 ```
 REG ADD "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /V "HideFileExt" /T REG_DWORD /D 00000000 /F
 
 ```
 
 # Disable the '- Shortcut' suffix on all shortcuts
-[HKEYCURRENTUSER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer]
-"link"=hex:1b,00,00,00
+`PowerShell (admin)`
 ```
 # Set variables to indicate value and key to set
 $RegistryPath = 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer'
@@ -336,16 +349,14 @@ New-ItemProperty -Path $RegistryPath -Name $Name -Value $Value -PropertyType $Ty
 ```
 
 # Disable legacy NTFS 8.3 name retention
-[HKEYLOCALMACHINE\SYSTEM\CurrentControlSet\Control\FileSystem]
-"NtfsDisable8dot3NameCreation"=dword:00000003
+`PowerShell (admin)`
 ```
 REG ADD "HKLM\SYSTEM\CurrentControlSet\Control\FileSystem" /V "NtfsDisable8dot3NameCreation" /T REG_DWORD /D 00000003 /F
 
 ```
 
 # Show checkboxes in explorer for files/folders
-[HKEYCURRENTUSER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced]
-"AutoCheckSelect"=dword:00000001
+`PowerShell (admin)`
 ```
 REG ADD "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /V "AutoCheckSelect" /T REG_DWORD /D 00000001 /F
 
@@ -353,15 +364,14 @@ REG ADD "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /V "A
 
 
 # Show full path in exporer title bars
-[HKEYCURRENTUSER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\CabinetState]
-"FullPath"=dword:00000001
+`PowerShell (admin)`
 ```
 REG ADD "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\CabinetState" /V "FullPath" /T REG_DWORD /D 00000001 /F
 
 ```
 
 # Disable explorer 'help' key
-**WARNING** This does not remove the help tool, just makes it so the OS can no longer execute it.  If this sounds bad to you, just don't run this
+**WARNING** This does not remove the help tool, just makes it so the OS can no longer execute it.  If this sounds bad to you, just don't run this  
 ```
 taskkill /f /im HelpPane.exe
 takeown /f %WinDir%\HelpPane.exe
@@ -370,8 +380,9 @@ icacls %WinDir%\HelpPane.exe /deny Everyone:(X)
 ```
 
 # Disable Hibernation
-**NOTE** You only want this if you have an SSD or NVME drive as your boot drive.  
-**NOTE** If you are on a laptop you probablay DO NOT want to turn this off
+**NOTE** You only want this if you have an SSD or NVME drive as your boot drive  
+**NOTE** If you are on a laptop you probablay DO NOT want to turn this off  
+`PowerShell (admin)`
 ```
 powercfg -h off
 
@@ -381,9 +392,10 @@ powercfg -h off
 To settle the system state
 
 # OPTIONAL Checkpint again
-Now that you have a clean base to start installing on top of, good idea to make a checkpoint before moving on
+Now that you have a clean base to start installing on top of, good idea to make a checkpoint before moving on  
 Because windows by default does not allow more than 1 checkpint every 24 hours, we have to change the checkpiont interval in regedit before we can run this second checkpoint.  
-**NOTE** If you do run this, after the checkpioint is complete, set the checkpoint back to it's default value
+**NOTE** If you do run this, after the checkpioint is complete, set the checkpoint back to it's default value  
+`PowerShell (admin)`
 ```
 # Remove the checkpoint interval entierly
 REG ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SystemRestore" /V "SystemRestorePointCreationFrequency" /T REG_DWORD /D 0 /F
@@ -397,7 +409,8 @@ REG DELETE "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SystemRestore" /V 
 ```
 
 # Install main application stacks
-**NOTE** If you don't want a particular application, remove it from the list
+**NOTE** If you don't want a particular application, remove it from the list  
+`PowerShell`
 ```
 $winget_install_list = @(
   "brave.brave"
@@ -425,6 +438,7 @@ foreach ($app in $winget_install_list) {
 ```
 
 ## Extra apps
+`PowerShell`
 ```
 $winget_extras_list = @(
   "qBittorrent.qBittorrent"
@@ -439,6 +453,7 @@ foreach ($app in $winget_extras_list) {
 ```
 
 ## Extra Game Stores
+`PowerShell`
 ```
 $winget_extras_list = @(
   "Ubisoft.Connect"
@@ -453,7 +468,8 @@ foreach ($app in $winget_extras_list) {
 
 ```
 ## Full Playnite Stack
-All game stores supported by PlayNite (except Battle.Net as it's not in winget yet)
+All game stores supported by PlayNite (except Battle.Net as it's not in winget yet)  
+`PowerShell`
 ```
 $playnite_stack = @(
   "Amazon.Games"
