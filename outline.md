@@ -12,6 +12,7 @@ This is the outline doc for the process.  It includes executable code snips as w
 - https://github.com/5cover/WinClean - Various code snippits (don't actually recommend running it)
 - https://devblogs.microsoft.com/powershell-community/how-to-update-or-add-a-registry-key-value-with-powershell/ - for powershell regedit code
 - https://www.tenforums.com/tutorials/94682-change-system-restore-point-creation-frequency-windows-10-a.html - For simpler regedit code and syste restore point frequncy modifications
+- https://www.minitool.com/news/how-to-uninstall-copilot.html - How to disable CoPilot
 
 # Allow powershell script execution
 Literaly everything in this requires script execution  
@@ -346,6 +347,22 @@ If (-NOT (Test-Path $RegistryPath)) {
 # Now set the value
 New-ItemProperty -Path $RegistryPath -Name $Name -Value $Value -PropertyType $Type -Force 
 
+```
+
+# Disable Windows CoPilot
+`PowerShell (admin)`
+```
+# Set variables to indicate value and key to set
+$RegistryPath = 'HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\WindowsCopilot'
+$Name         = 'TurnOffWindowsCopilot'
+$Value        = '1'
+$Type         = 'DWORD'
+# Create the key if it does not exist
+If (-NOT (Test-Path $RegistryPath)) {
+  New-Item -Path $RegistryPath -Force | Out-Null
+}  
+# Now set the value
+New-ItemProperty -Path $RegistryPath -Name $Name -Value $Value -PropertyType $Type -Force 
 ```
 
 # Disable legacy NTFS 8.3 name retention
