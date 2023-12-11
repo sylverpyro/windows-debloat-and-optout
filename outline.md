@@ -353,7 +353,7 @@ New-ItemProperty -Path $RegistryPath -Name $Name -Value $Value -PropertyType $Ty
 `PowerShell (admin)`
 ```
 # Set variables to indicate value and key to set
-$RegistryPath = 'HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\WindowsCopilot'
+$RegistryPath = 'HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot'
 $Name         = 'TurnOffWindowsCopilot'
 $Value        = '1'
 $Type         = 'DWORD'
