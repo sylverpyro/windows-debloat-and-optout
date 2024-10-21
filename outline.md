@@ -240,7 +240,15 @@ sc config XboxGipSvc start= disabled
 sc config xboxgip start= disabled
 sc config xbgm start= disabled
 sc config XblGameSave start= disabled
+```
 
+# OPTIONAL: Remove XBox Game Bar
+
+`cmd.exe (admin)`
+```
+Get-AppxPackage Microsoft.XboxGamingOverlay | Remove-AppxPackage
+reg add HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\GameDVR /f /t REG_DWORD /v "AppCaptureEnabled" /d 0
+reg add HKEY_CURRENT_USER\System\GameConfigStore /f /t REG_DWORD /v "GameDVR_Enabled" /d 0
 ```
 
 # OPTIONAL: Disable xbox auth service
