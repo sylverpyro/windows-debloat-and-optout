@@ -5,14 +5,25 @@ This is the outline doc for the process.  It includes executable code snips as w
 - Some commands are powerShell while others are CMD shell commands.  Make sure you run the command in the correct environment or it will not work at all.
 
 # Sources and credits
+
+Sections of this guide and related scripts cribbed from the following
+
+- https://github.com/ChrisTitusTech/winutil - WinUtil by ChrisTitusTech 
+  - one of the best service disablement catalogs and feature switching tools
 - https://dl5.oo-software.com - Shutup and OptOut 10+
+  - One of the best, user friendly, windows 'creepy' disablement toos
 - https://github.com/builtbybel/BloatyNosy/releases - BloatyNoisy
   - Same author, new app (in early preview): https://github.com/builtbybel/JunkCtrl
-- https://github.com/Sycnex/Windows10Debloater - Win10Debloater and Various code snippits
-- https://github.com/5cover/WinClean - Various code snippits (don't actually recommend running it)
-- https://devblogs.microsoft.com/powershell-community/how-to-update-or-add-a-registry-key-value-with-powershell/ - for powershell regedit code
-- https://www.tenforums.com/tutorials/94682-change-system-restore-point-creation-frequency-windows-10-a.html - For simpler regedit code and syste restore point frequncy modifications
-- https://www.minitool.com/news/how-to-uninstall-copilot.html - How to disable CoPilot
+- https://github.com/Sycnex/Windows10Debloater 
+  - Win10Debloater and Various code snippits
+- https://github.com/5cover/WinClean 
+  - Various code snippits
+- https://devblogs.microsoft.com/powershell-community/how-to-update-or-add-a-registry-key-value-with-powershell/ 
+  - for powershell regedit code
+- https://www.tenforums.com/tutorials/94682-change-system-restore-point-creation-frequency-windows-10-a.html 
+  - For simpler regedit code and syste restore point frequncy modifications
+- https://www.minitool.com/news/how-to-uninstall-copilot.html 
+  - How to disable CoPilot
 
 # Allow powershell script execution
 Literaly everything in this requires script execution  
@@ -55,16 +66,6 @@ Checkpoint-Computer -Description "Freshly installed system pre-debloat"
 REG DELETE "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SystemRestore" /V "SystemRestorePointCreationFrequency" /F
 
 ```
-
-# Get and run Win10 Debloater
-`PowerShell`
-```
-wget https://github.com/Sycnex/Windows10Debloater/archive/refs/heads/master.zip -OutFile ~\Downloads\Win10Debloater-sycnex.zip
-```
-
-# Get and run BloatyNoisy
-Manually download the latest release and run it  
-* https://github.com/builtbybel/BloatyNosy/releases/latest
 
 # Get and run Opt out and ShutUp 11
 `PowerShell`
